@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: cs-image-search-mcp-server
+  profiles:
+      active: stdio
+  ai:
+    dashscope:
+      api-key: sk-2fe81865080b42a0a8b448b6813b78cf
+server:
+    port: 8127
