@@ -53,6 +53,11 @@ export const createSSEConnection = (url, onMessage, onError, onComplete) => {
     }
     
     eventSource.onerror = (error) => {
+      if (eventSource.readyState === EventSource.CLOSED) {
+        console.log('EventSource连接已关闭')
+        if (onComplete) onComplete()
+        return
+      }
       console.error('EventSource连接错误:', error)
       if (onError) onError(error)
       eventSource.close()

@@ -11,8 +11,6 @@ import com.itextpdf.layout.element.Paragraph;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 
-import java.io.IOException;
-
 /**
  * PDF 生成工具
  */
@@ -40,13 +38,24 @@ public class PDFGenerationTool {
                 PdfFont font = PdfFontFactory.createFont("STSongStd-Light", "UniGB-UCS2-H");
                 document.setFont(font);
                 // 创建段落
-                Paragraph paragraph = new Paragraph(content);
+                Paragraph paragraph = new Paragraph(sanitizePdfContent(content));
                 // 添加段落并关闭文档
                 document.add(paragraph);
             }
-            return "PDF generated successfully to: " + filePath;
-        } catch (IOException e) {
-            return "Error generating PDF: " + e.getMessage();
+            return "PDF 文件已生成：" + filePath;
+        } catch (Exception e) {
+            return "PDF 生成失败，请简化内容后重试。";
         }
+    }
+
+    private String sanitizePdfContent(String content) {
+        if (content == null) {
+            return "";
+        }
+        return content.codePoints()
+                .filter(codePoint -> codePoint <= Character.MAX_VALUE)
+                .filter(codePoint -> !Character.isISOControl(codePoint) || codePoint == '\n' || codePoint == '\r' || codePoint == '\t')
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }

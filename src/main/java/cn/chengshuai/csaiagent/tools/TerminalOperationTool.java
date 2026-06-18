@@ -16,9 +16,11 @@ public class TerminalOperationTool {
     public String executeTerminalCommand(@ToolParam(description = "Command to execute in the terminal") String command) {
         StringBuilder output = new StringBuilder();
         try {
-            ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", command);
-//            Process process = Runtime.getRuntime().exec(command);
-            Process process = builder.start();
+            boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+            ProcessBuilder builder = isWindows
+                    ? new ProcessBuilder("cmd.exe", "/c", command)
+                    : new ProcessBuilder("/bin/sh", "-c", command);
+            Process process = builder.redirectErrorStream(true).start();
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -29,8 +31,11 @@ public class TerminalOperationTool {
             if (exitCode != 0) {
                 output.append("Command execution failed with exit code: ").append(exitCode);
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             output.append("Error executing command: ").append(e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            output.append("Command execution interrupted: ").append(e.getMessage());
         }
         return output.toString();
     }

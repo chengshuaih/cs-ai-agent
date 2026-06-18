@@ -35,6 +35,9 @@ public class ToolCallAgent extends ReActAgent {
     // 保存工具调用信息的响应结果（要调用那些工具）
     private ChatResponse toolCallChatResponse;
 
+    // 保存无需调用工具时的模型回答
+    private String lastThinkResult;
+
     // 工具调用管理者
     private final ToolCallingManager toolCallingManager;
 
@@ -69,7 +72,7 @@ public class ToolCallAgent extends ReActAgent {
         try {
             ChatResponse chatResponse = getChatClient().prompt(prompt)
                     .system(getSystemPrompt())
-                    .tools(availableTools)
+                    .toolCallbacks(availableTools)
                     .call()
                     .chatResponse();
             // 记录响应，用于等下 Act
@@ -91,14 +94,18 @@ public class ToolCallAgent extends ReActAgent {
             if (toolCallList.isEmpty()) {
                 // 只有不调用工具时，才需要手动记录助手消息
                 getMessageList().add(assistantMessage);
+                this.lastThinkResult = StrUtil.blankToDefault(result, "思考完成 - 无需行动");
+                setState(AgentState.FINISHED);
                 return false;
             } else {
                 // 需要调用工具时，无需记录助手消息，因为调用工具时会自动记录
                 return true;
             }
         } catch (Exception e) {
-            log.error(getName() + "的思考过程遇到了问题：" + e.getMessage());
-            getMessageList().add(new AssistantMessage("处理时遇到了错误：" + e.getMessage()));
+            log.error(getName() + "的思考过程遇到了问题", e);
+            this.lastThinkResult = "处理时遇到了问题，请稍后再试。";
+            getMessageList().add(new AssistantMessage(this.lastThinkResult));
+            setState(AgentState.FINISHED);
             return false;
         }
     }
@@ -109,9 +116,18 @@ public class ToolCallAgent extends ReActAgent {
      * @return 执行结果
      */
     @Override
+    public String step() {
+        boolean shouldAct = think();
+        if (!shouldAct) {
+            return StrUtil.blankToDefault(lastThinkResult, "思考完成 - 无需行动");
+        }
+        return act();
+    }
+
+    @Override
     public String act() {
         if (!toolCallChatResponse.hasToolCalls()) {
-            return "没有工具需要调用";
+            return "";
         }
         // 调用工具
         Prompt prompt = new Prompt(getMessageList(), this.chatOptions);
@@ -122,14 +138,16 @@ public class ToolCallAgent extends ReActAgent {
         // 判断是否调用了终止工具
         boolean terminateToolCalled = toolResponseMessage.getResponses().stream()
                 .anyMatch(response -> response.name().equals("doTerminate"));
-        if (terminateToolCalled) {
-            // 任务结束，更改状态
+        if (terminateToolCalled && toolResponseMessage.getResponses().size() == 1) {
+            // 只有单独调用终止工具时才结束；如果同一轮还有业务工具结果，需要再让模型生成最终回复。
             setState(AgentState.FINISHED);
         }
         String results = toolResponseMessage.getResponses().stream()
+                .filter(response -> !response.name().equals("doTerminate"))
                 .map(response -> "工具 " + response.name() + " 返回的结果：" + response.responseData())
                 .collect(Collectors.joining("\n"));
         log.info(results);
-        return results;
+        // 工具结果只进入对话上下文，不直接发给前端；下一轮 think 负责生成用户可读总结。
+        return "";
     }
 }

@@ -6,7 +6,7 @@
           <button class="back-btn" @click="goBack">
             <span>←</span> 返回主页
           </button>
-          <h1>🔧 调试页面</h1>
+          <h1>调试页面</h1>
         </div>
       </div>
     </div>
@@ -239,136 +239,206 @@ export default {
 <style scoped>
 .debug-page {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #f7f7f8;
+  color: #202123;
+}
+
+.debug-page * {
+  box-sizing: border-box;
+}
+
+.container {
+  width: min(100% - 32px, 1040px);
+  margin: 0 auto;
 }
 
 .header {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-  color: white;
-  padding: 20px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid #e5e5e5;
+  backdrop-filter: blur(10px);
 }
 
 .header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
 }
 
 .back-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #d9d9e3;
+  color: #343541;
+  padding: 7px 12px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.3s ease;
+  line-height: 1.2;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #f1f1f3;
+  border-color: #c5c5d2;
+}
+
+.back-btn:focus-visible,
+.test-btn:focus-visible,
+.send-test-btn:focus-visible,
+.test-input:focus-visible {
+  outline: 2px solid #10a37f;
+  outline-offset: 2px;
 }
 
 .header h1 {
-  font-size: 1.8rem;
   margin: 0;
+  color: #202123;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .debug-container {
   max-width: 1000px;
-  margin: 30px auto;
+  margin: 0 auto;
+  padding: 28px 0 40px;
 }
 
 .debug-section {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
 }
 
 .debug-section h3 {
-  margin-bottom: 20px;
-  color: #333;
-  border-bottom: 2px solid #6c5ce7;
-  padding-bottom: 10px;
+  margin: 0 0 14px;
+  color: #202123;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .test-buttons {
   display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
-.test-btn {
-  background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-  color: white;
-  border: none;
-  padding: 10px 20px;
+.test-btn,
+.send-test-btn {
+  border: 1px solid #d9d9e3;
+  padding: 7px 12px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
+  font-size: 13px;
+  line-height: 1.3;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.test-btn {
+  background: #ffffff;
+  color: #343541;
 }
 
 .test-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: #f7f7f8;
+  border-color: #c5c5d2;
+}
+
+.send-test-btn {
+  background: #10a37f;
+  border-color: #10a37f;
+  color: #ffffff;
+}
+
+.send-test-btn:hover {
+  background: #0e8f70;
+  border-color: #0e8f70;
 }
 
 .test-results {
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
 }
 
 .test-result {
   display: flex;
-  gap: 15px;
-  padding: 10px;
-  border-radius: 6px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
   margin-bottom: 8px;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .test-result.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6c3;
+  background: #f0fdf7;
+  color: #046c4e;
+  border: 1px solid #c6f6df;
 }
 
 .test-result.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background: #fff5f5;
+  color: #b42318;
+  border: 1px solid #fed7d7;
 }
 
-.result-time {
-  font-weight: bold;
-  min-width: 80px;
+.result-time,
+.result-status,
+.log-time,
+.log-type {
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+
+.result-time,
+.log-time {
+  min-width: 72px;
+  color: #6b7280;
 }
 
 .result-status {
-  font-weight: bold;
-  min-width: 60px;
+  min-width: 54px;
+}
+
+.result-message,
+.log-message {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .log-container {
-  max-height: 300px;
-  overflow-y: auto;
-  background: #f8f9fa;
-  border-radius: 6px;
-  padding: 15px;
+  max-height: 320px;
+  overflow: auto;
+  background: #f4f4f5;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 10px 12px;
 }
 
 .log-entry {
   display: flex;
-  gap: 15px;
+  align-items: flex-start;
+  gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px solid #e9ecef;
-  font-family: monospace;
-  font-size: 13px;
+  border-bottom: 1px solid #e5e5e5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .log-entry:last-child {
@@ -376,69 +446,118 @@ export default {
 }
 
 .log-entry.info {
-  color: #0066cc;
+  color: #2563eb;
 }
 
 .log-entry.success {
-  color: #28a745;
+  color: #047857;
 }
 
 .log-entry.error {
-  color: #dc3545;
-}
-
-.log-time {
-  font-weight: bold;
-  min-width: 80px;
+  color: #dc2626;
 }
 
 .log-type {
-  font-weight: bold;
-  min-width: 60px;
+  min-width: 52px;
 }
 
 .manual-test {
   display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .test-input {
   flex: 1;
-  padding: 10px;
-  border: 2px solid #e9ecef;
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid #d9d9e3;
   border-radius: 8px;
+  background: #ffffff;
+  color: #202123;
   font-size: 14px;
+  line-height: 1.4;
 }
 
-.send-test-btn {
-  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
+.test-input::placeholder {
+  color: #8e8ea0;
 }
 
 .test-response {
-  background: #f8f9fa;
-  border-radius: 6px;
-  padding: 15px;
+  background: #f4f4f5;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 12px;
 }
 
 .test-response h4 {
-  margin-bottom: 10px;
-  color: #333;
+  margin: 0 0 10px;
+  color: #343541;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .test-response pre {
-  background: #2d3748;
-  color: #e2e8f0;
-  padding: 15px;
-  border-radius: 6px;
-  overflow-x: auto;
+  max-height: 360px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  color: #343541;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 24px, 1040px);
+  }
+
+  .header-content {
+    min-height: 58px;
+    gap: 12px;
+  }
+
+  .header h1 {
+    font-size: 16px;
+  }
+
+  .debug-container {
+    padding: 18px 0 28px;
+  }
+
+  .debug-section {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .test-buttons,
+  .manual-test {
+    flex-direction: column;
+  }
+
+  .test-btn,
+  .send-test-btn,
+  .test-input {
+    width: 100%;
+  }
+
+  .test-result,
+  .log-entry {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 8px;
+  }
+
+  .result-message,
+  .log-message {
+    grid-column: 1 / -1;
+  }
 }
 </style> 

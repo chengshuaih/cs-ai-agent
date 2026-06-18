@@ -5,6 +5,7 @@ import cn.chengshuai.csaiagent.app.LoveApp;
 import jakarta.annotation.Resource;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/ai")
@@ -27,6 +30,9 @@ public class AiController {
 
     @Resource
     private ChatModel dashscopeChatModel;
+
+    @Resource
+    private ToolCallbackProvider toolCallbackProvider;
 
     /**
      * 同步调用 AI 恋爱大师应用
@@ -99,7 +105,10 @@ public class AiController {
      */
     @GetMapping("/manus/chat")
     public SseEmitter doChatWithManus(String message) {
-        CsManus csManus = new CsManus(allTools, dashscopeChatModel);
+        ToolCallback[] mcpTools = toolCallbackProvider.getToolCallbacks();
+        ToolCallback[] tools = Stream.concat(Arrays.stream(allTools), Arrays.stream(mcpTools))
+                .toArray(ToolCallback[]::new);
+        CsManus csManus = new CsManus(tools, dashscopeChatModel);
         return csManus.runStream(message);
     }
 }

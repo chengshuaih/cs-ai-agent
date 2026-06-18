@@ -72,19 +72,21 @@ public abstract class BaseAgent {
                 log.info("Executing step {}/{}", stepNumber, maxSteps);
                 // 单步执行
                 String stepResult = step();
-                String result = "Step " + stepNumber + ": " + stepResult;
-                results.add(result);
+                String result = formatStepResult(stepNumber, stepResult);
+                if (StrUtil.isNotBlank(result)) {
+                    results.add(result);
+                }
             }
             // 检查是否超出步骤限制
             if (currentStep >= maxSteps) {
                 state = AgentState.FINISHED;
-                results.add("Terminated: Reached max steps (" + maxSteps + ")");
+                results.add("执行结束：达到最大步骤（" + maxSteps + "）");
             }
             return String.join("\n", results);
         } catch (Exception e) {
             state = AgentState.ERROR;
             log.error("error executing agent", e);
-            return "执行错误" + e.getMessage();
+            return "执行时遇到问题，请稍后再试。";
         } finally {
             // 3、清理资源
             this.cleanup();
@@ -131,24 +133,27 @@ public abstract class BaseAgent {
                     log.info("Executing step {}/{}", stepNumber, maxSteps);
                     // 单步执行
                     String stepResult = step();
-                    String result = "Step " + stepNumber + ": " + stepResult;
-                    results.add(result);
-                    // 输出当前每一步的结果到 SSE
-                    sseEmitter.send(result);
+                    String result = formatStepResult(stepNumber, stepResult);
+                    if (StrUtil.isNotBlank(result)) {
+                        results.add(result);
+                        // 只把用户可见结果输出到 SSE，工具执行细节留在内部上下文和日志中
+                        sseEmitter.send(result);
+                    }
                 }
                 // 检查是否超出步骤限制
                 if (currentStep >= maxSteps) {
                     state = AgentState.FINISHED;
-                    results.add("Terminated: Reached max steps (" + maxSteps + ")");
+                    results.add("执行结束：达到最大步骤（" + maxSteps + "）");
                     sseEmitter.send("执行结束：达到最大步骤（" + maxSteps + "）");
                 }
                 // 正常完成
+                sseEmitter.send("[DONE]");
                 sseEmitter.complete();
             } catch (Exception e) {
                 state = AgentState.ERROR;
                 log.error("error executing agent", e);
                 try {
-                    sseEmitter.send("执行错误：" + e.getMessage());
+                    sseEmitter.send("执行时遇到问题，请稍后再试。");
                     sseEmitter.complete();
                 } catch (IOException ex) {
                     sseEmitter.completeWithError(ex);
@@ -174,6 +179,18 @@ public abstract class BaseAgent {
             log.info("SSE connection completed");
         });
         return sseEmitter;
+    }
+
+    /**
+     * 格式化单步结果。普通问答在第一步结束时直接返回正文，工具执行过程保留步骤信息。
+     */
+    private String formatStepResult(int stepNumber, String stepResult) {
+        if (stepNumber == 1 && state == AgentState.FINISHED
+                && StrUtil.isNotBlank(stepResult)
+                && !stepResult.startsWith("工具 ")) {
+            return stepResult;
+        }
+        return stepResult;
     }
 
     /**

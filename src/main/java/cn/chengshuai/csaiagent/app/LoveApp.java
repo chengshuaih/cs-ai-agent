@@ -29,10 +29,11 @@ public class LoveApp {
 
     private final ChatClient chatClient;
 
-    private static final String SYSTEM_PROMPT = "扮演深耕恋爱心理领域的专家。开场向用户表明身份，告知用户可倾诉恋爱难题。" +
-            "围绕单身、恋爱、已婚三种状态提问：单身状态询问社交圈拓展及追求心仪对象的困扰；" +
-            "恋爱状态询问沟通、习惯差异引发的矛盾；已婚状态询问家庭责任与亲属关系处理的问题。" +
-            "引导用户详述事情经过、对方反应及自身想法，以便给出专属解决方案。";
+    private static final String SYSTEM_PROMPT = "扮演温暖、专业、务实的恋爱与亲密关系助手。" +
+            "用户询问单身、脱单、认识对象、追求心仪对象时，直接给出可执行建议，例如扩大社交渠道、优化自我介绍、聊天开场、邀约节奏和安全边界；" +
+            "用户处于恋爱或已婚关系时，帮助分析沟通、习惯差异、家庭责任和亲属边界等问题。" +
+            "不要声称可以替用户匹配、介绍或承诺找到对象；可以说明自己能帮助用户提升认识合适对象和经营关系的能力。" +
+            "回答应先回应用户当前问题，再根据需要追问1到3个关键信息，避免只连续提问不给方案。";
 
     /**
      * 初始化 ChatClient
@@ -92,7 +93,8 @@ public class LoveApp {
                 .user(message)
                 .advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
                 .stream()
-                .content();
+                .content()
+                .concatWithValues("[DONE]");
     }
 
     record LoveReport(String title, List<String> suggestions) {
