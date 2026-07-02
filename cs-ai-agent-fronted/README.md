@@ -1,26 +1,31 @@
-# CS AI Agent Frontend
+# 机器视觉智能问答与采集辅助系统 - 前端
 
-这是一个基于Vue3的AI智能体前端应用，包含两个主要的AI聊天应用。
+这是一个基于 Vue3 的前端应用，面向机器视觉学习、数据采集与实验规划场景，提供问答、采集辅助、报告中心与项目工作区。
 
 ## 功能特性
 
-### 🏠 主页
-- 美观的渐变背景设计
-- 两个AI应用卡片展示
+### 主页
+- 系统功能入口卡片导航
 - 响应式布局，支持移动端
 
-### 💕 AI 恋爱大师
-- 聊天室风格的界面
-- 用户消息在右侧，AI回复在左侧
-- 自动生成会话ID
-- 通过SSE实时显示对话内容
-- 支持输入框和发送按钮
+### 视觉知识问答
+- 聊天室风格界面，用户消息在右、AI 回复在左
+- 自动生成会话 ID
+- 通过 SSE 实时显示对话内容
+- 支持机器视觉概念、评价指标与 RAG 知识检索
 
-### 🤖 AI 超级智能体
-- 与恋爱大师相同的聊天界面
-- 不同的主题色彩（蓝色渐变）
-- 通过SSE实时显示对话内容
-- 多功能AI助手服务
+### 视觉采集智能体
+- 与问答相同的聊天界面
+- 理解任务后调用工具，生成采集规划、实验流程与报告
+- 通过 SSE 实时显示对话内容
+
+### 采集辅助规划
+- 输入视觉任务，生成推荐点位、路线、采集清单与安全提示
+- 一键导出 PDF 报告
+
+### 报告中心 / 项目工作区
+- 报告中心查看已生成报告记录
+- 项目工作区按项目聚合采集计划、实验计划与报告
 
 ## 技术栈
 
@@ -36,9 +41,12 @@
 cs-ai-agent-fronted/
 ├── src/
 │   ├── views/
-│   │   ├── Home.vue          # 主页
-│   │   ├── LoveApp.vue       # AI恋爱大师
-│   │   └── ManusApp.vue      # AI超级智能体
+│   │   ├── Home.vue              # 主页
+│   │   ├── VisionQaApp.vue       # 视觉知识问答
+│   │   ├── VisionAgentApp.vue    # 视觉采集智能体
+│   │   ├── CollectionPlanner.vue # 采集辅助规划
+│   │   ├── ReportCenter.vue      # 报告中心
+│   │   └── ProjectWorkspace.vue  # 采集项目工作区
 │   ├── router/
 │   │   └── index.js          # 路由配置
 │   ├── App.vue               # 根组件
@@ -76,8 +84,14 @@ npm run preview
 项目需要配合SpringBoot后端使用，接口地址前缀：`http://localhost:8123/api`
 
 ### 接口列表
-- `GET /ai/love_app/chat/sse` - AI恋爱大师聊天接口（SSE）
-- `GET /ai/manus/chat` - AI超级智能体聊天接口（SSE）
+- `GET /ai/vision/chat/sse` - 视觉知识问答接口（SSE）
+- `GET /ai/vision/chat/sync` - 视觉知识问答接口（同步）
+- `GET /ai/vision/chat/rag` - 视觉知识 RAG 问答接口
+- `GET /ai/vision-agent/chat` - 视觉采集智能体接口（SSE）
+- `POST /vision/collection/plan` - 生成采集规划
+- `POST /vision/report/pdf` - 生成 PDF 报告
+- `GET /vision/report/list` - 报告列表
+- `POST /vision/project`、`GET /vision/project/list`、`GET /vision/project/{id}` - 项目工作区
 
 ## 主要特性
 

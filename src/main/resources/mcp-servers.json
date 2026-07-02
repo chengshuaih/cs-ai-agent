@@ -7,19 +7,20 @@
         "@amap/amap-maps-mcp-server"
       ],
       "env": {
-        "AMAP_MAPS_API_KEY": "38a05e467c5f695d75fe4a00b140655c"
+        "AMAP_MAPS_API_KEY": "${local-api-keys.amap.maps-api-key}"
       }
     },
     "yu-image-search-mcp-server": {
-      "command": "/Users/chengshuai/Library/Java/JavaVirtualMachines/jbr-17.0.14/Contents/Home/bin/java",
+      "command": "/bin/sh",
       "args": [
-        "-Dspring.ai.mcp.server.stdio=true",
-        "-Dspring.main.web-application-type=none",
-        "-Dlogging.pattern.console=",
-        "-jar",
-        "cs-image-search-mcp-server/target/cs-image-search-mcp-server-0.0.1-SNAPSHOT.jar"
+        "-c",
+        "exec /Users/chengshuai/Library/Java/JavaVirtualMachines/jbr-17.0.14/Contents/Home/bin/java -Dspring.ai.mcp.server.stdio=true -Dspring.main.web-application-type=none -Dspring.main.banner-mode=off -Dlogging.level.root=OFF -Dlogging.level.com.alibaba.nacos=OFF -Dlogging.level.org.springframework=OFF -jar /Users/chengshuai/Work/private/cs-ai-agent/cs-image-search-mcp-server/target/cs-image-search-mcp-server-0.0.1-SNAPSHOT.jar"
       ],
-      "env": {}
+      "env": {
+        "PEXELS_API_KEY": "${local-api-keys.pexels.api-key}",
+        "DASHSCOPE_API_KEY": "${spring.ai.dashscope.api-key}",
+        "SPRING_AI_DASHSCOPE_API_KEY": "${spring.ai.dashscope.api-key}"
+      }
     }
 
   }

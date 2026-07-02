@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:8123/api'
+// API 基础地址从环境变量读取，默认本地开发地址。生产部署通过 .env 配置 VITE_API_BASE_URL。
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8123/api'
 
 // 创建axios实例
 const api = axios.create({
@@ -15,6 +16,10 @@ const api = axios.create({
 api.interceptors.request.use(
   config => {
     console.log('发送请求:', config.url, config.params || config.data)
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers['Authorization'] = 'Bearer ' + token
+    }
     return config
   },
   error => {
@@ -31,6 +36,11 @@ api.interceptors.response.use(
   },
   error => {
     console.error('响应错误:', error.response?.status, error.message)
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('username')
+      window.location.href = '/login'
+    }
     return Promise.reject(error)
   }
 )

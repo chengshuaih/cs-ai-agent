@@ -14,7 +14,7 @@
 
 > 机器视觉智能问答与采集辅助系统 V1.0
 
-该名称比“无人驾驶路面小目标三维重建智能实验管理系统”更宽泛，能够覆盖机器视觉、无人驾驶视觉感知、图像采集、数据标注、实验管理等方向，同时仍然能和毕业论文中的“小目标视觉先验、无人驾驶场景、三维重建、机器视觉”建立自然关联。
+该名称能够覆盖机器视觉、无人驾驶视觉感知、图像采集、数据标注、实验管理等多个方向，定位为一个独立、自洽的机器视觉辅助产品，不绑定任何特定算法或具体实验。
 
 系统一句话描述：
 
@@ -22,9 +22,9 @@
 
 ## 2. 设计原则
 
-### 2.1 宽领域、强关联
+### 2.1 宽领域、可延展
 
-系统不局限于某一个论文实验，也不只服务于 3DGS，而是覆盖机器视觉项目中的通用环节：
+系统不局限于某一类视觉任务，也不绑定某个具体算法，而是覆盖机器视觉项目中的通用环节：
 
 - 视觉任务理解
 - 数据集采集与规划
@@ -34,7 +34,7 @@
 - 实验日志与指标解释
 - 结果报告生成
 
-这样系统和毕业论文的关系是“机器视觉方向的实验辅助工具”，而不是强行把 Java 项目包装成三维重建核心算法。
+系统定位为“机器视觉方向的通用实验与采集辅助工具”，是一个可独立使用、可持续扩展的产品，而不是把 Java 项目包装成某种视觉算法本体。
 
 ### 2.2 保留现有技术亮点
 
@@ -43,7 +43,7 @@
 - Spring Boot 3 后端服务
 - Spring AI / Spring AI Alibaba 大模型接入
 - RAG 知识库问答
-- PgVector 向量存储
+- 向量存储：MVP 默认 SimpleVectorStore（内存）；PgVector 为可选/预留方案
 - Tool Calling 工具调用
 - MCP Client
 - 高德地图 MCP
@@ -75,7 +75,7 @@ PDF 工具也不只做普通文档导出，而应服务于机器视觉实验材�
 - 标注规范说明
 - 实验流程说明
 - 实验阶段报告
-- 论文资料摘要
+- 资料摘要
 
 ## 3. 用户故事
 
@@ -91,9 +91,9 @@ PDF 工具也不只做普通文档导出，而应服务于机器视觉实验材�
 
 作为视觉实验执行者，我希望系统能把一个模糊实验目标拆成可执行步骤，生成数据准备、标注、训练、评估和结果整理流程，减少实验过程中的遗漏。
 
-### 3.4 论文写作者
+### 3.4 实验材料整理者
 
-作为毕业论文作者，我希望系统能根据知识库、采集记录和实验结果生成阶段性 PDF 报告，作为论文实验记录、开题后续材料和软著演示材料的支撑。
+作为需要沉淀实验材料的用户，我希望系统能根据知识库、采集记录和实验结果生成阶段性 PDF 报告，作为实验记录、项目材料和软著演示材料的支撑。
 
 ## 4. 系统功能总览
 
@@ -181,7 +181,7 @@ PDF 工具也不只做普通文档导出，而应服务于机器视觉实验材�
 | 新增功能 | 价值 | 代码落点 |
 |---|---|---|
 | 实验流程规划 DTO | 支撑“机器视觉实验辅助系统”的宽泛定位 | 新增 `vision/model/ExperimentPlan.java` |
-| 实验计划 PDF 模板 | 和毕业论文实验流程关联更自然 | 新增 `vision/report/ExperimentPlanReportBuilder.java` |
+| 实验计划 PDF 模板 | 让实验流程规划能力可沉淀为可下载材料 | 新增 `vision/report/ExperimentPlanReportBuilder.java` |
 | 报告中心页面 | 展示已生成 PDF，增强系统完整度 | 新增 `ReportCenter.vue` |
 | 资料摘要生成 | 复用搜索、网页抓取和文件工具 | 新增 `vision/service/ResearchSummaryService.java` |
 | 机器视觉示例问题库 | 前端首屏更像专业系统 | 新增前端常量或后端接口 |
@@ -202,7 +202,7 @@ PDF 工具也不只做普通文档导出，而应服务于机器视觉实验材�
 
 #### 功能目标
 
-将原“恋爱知识库问答”改造成“机器视觉知识库问答”。用户可以围绕机器视觉概念、算法路线、实验步骤和论文相关内容提问。
+将原“恋爱知识库问答”改造成“机器视觉知识库问答”。用户可以围绕机器视觉概念、算法路线、实验步骤和资料检索等内容提问。
 
 #### 知识库内容建议
 
@@ -216,8 +216,8 @@ PDF 工具也不只做普通文档导出，而应服务于机器视觉实验材�
 - 无人驾驶视觉感知场景说明.md
 - 数据采集与标注规范.md
 - 机器视觉实验流程指南.md
-- 毕业论文开题报告摘要.md
-- 论文实验整体完成流程.md
+- 视觉指标说明（PSNR/SSIM/LPIPS/mAP 等）.md
+- 视觉数据集与开源项目速览.md
 
 #### 典型问题
 
@@ -251,7 +251,7 @@ PDF 工具也不只做普通文档导出，而应服务于机器视觉实验材�
     - `sceneType`: road / campus / parking / intersection / reflective-road
 
 - **建议新增：领域问答系统 Prompt**
-  - `VisionQaApp` 的系统提示词应明确其边界：机器视觉、数据采集、实验规划、论文资料辅助。
+  - `VisionQaApp` 的系统提示词应明确其边界：机器视觉、数据采集、实验规划、资料检索辅助。
   - 对非机器视觉问题可回答但应回到专业边界。
 
 #### 验收标准
@@ -553,7 +553,7 @@ riskTips: 风险提示
 | ResourceDownloadTool | 下载公开资料、说明文档、示例数据 |
 | FileOperationTool | 保存采集计划、实验记录、知识文档 |
 | TerminalOperationTool | 生成或执行受控的实验辅助命令 |
-| PDFGenerationTool | 生成采集计划、实验报告、论文资料摘要 |
+| PDFGenerationTool | 生成采集计划、实验报告、技术资料摘要 |
 | MCP Client | 调用高德地图等外部工具能力 |
 
 #### 安全边界建议
@@ -633,11 +633,11 @@ riskTips: 风险提示
    - 评价指标
    - 预期结果
 
-3. **论文资料摘要报告**
+3. **技术资料摘要报告**
    - 资料来源
    - 关键概念
    - 方法对比
-   - 可用于论文的表述
+   - 可复用的表述
    - 后续阅读建议
 
 4. **阶段性实验总结报告**
@@ -754,6 +754,121 @@ riskTips: 风险提示
 - 涉及地点的问题能主动使用地图能力。
 - 涉及文档沉淀的问题能主动建议生成 Markdown 或 PDF。
 
+### 5.7 模块协作与数据流自洽设计
+
+本节用于消除模块之间的职责重叠与数据来源歧义，保证“聊天入口”和“结构化入口”给出的结果一致、可追溯。
+
+#### 5.7.1 单一规则中枢：避免两套采集逻辑
+
+系统存在两个采集相关入口：
+
+- `VisionAgent`：对话式入口，自然语言交互，适合探索性提问。
+- `CollectionPlanService`：结构化入口，由 `POST /api/vision/collection/plan` 调用，返回 `CollectionPlan` 对象。
+
+若两者各自实现地图调用与点位评估，同一问题在聊天页和采集辅助页会得到不一致结果。为保证自洽，约定：
+
+> `CollectionPlanService` 是采集规划的唯一规则中枢。`VisionAgent` 在识别到采集规划意图时，内部调用 `CollectionPlanService`，而不是自行直接调用地图 MCP 与评估逻辑。
+
+由此形成单向依赖：
+
+```text
+VisionAgent ──(采集意图)──> CollectionPlanTool ──> CollectionPlanService ──> 地图 MCP / VisionSceneClassifier / CollectionSiteEvaluator
+前端采集辅助页 ──(POST /collection/plan)──> CollectionPlanService（同一条路径）
+```
+
+**落地方式（消除"Prompt 约束 vs 工具调用"的歧义）**：新增 `CollectionPlanTool`，用 `@Tool` 注解封装 `CollectionPlanService.plan(...)`，注册进 `ToolRegistration.allTools()` 成为 Spring AI `ToolCallback`。`VisionAgent` 通过标准工具调用机制触发它，因此对话入口与结构化接口共用同一份 `CollectionPlanService` 规则实现，不存在两套逻辑。Prompt 仅用于引导何时选择该工具，不承载采集规则本身。
+
+`VisionAgent` 仍保留对知识问答、资料检索、报告生成等非采集任务的自由编排能力，只把“采集规划”这一类强规则任务收敛到服务层。
+
+#### 5.7.2 评估字段与地图 MCP 能力来源对照
+
+`CollectionSiteEvaluator` 的评分依赖具体数据，必须确认每项都能从地图 MCP 取到，否则评分规则无法落地。
+
+| 评估字段 | 数据来源 | 对应地图 MCP 能力 |
+|---|---|---|
+| 与目标场景匹配（0-40） | POI 类型 / 名称关键词 | POI 检索（关键字/周边搜索） |
+| 距离或可达性（0-20） | 候选点与用户位置距离、路径耗时 | 距离测量 / 路径规划接口 |
+| 场景多样性（0-20） | 周边 POI 类型分布 | 周边搜索结果聚合 |
+| 采集安全性（0-20） | 是否临近主干道、是否园区/校园等 | POI 类型 + 规则判断 |
+
+若某接口在当前 MCP 中不可用，则该项评分改为基于已有字段的规则估算，并在响应中标注“估算”，避免给出无依据的精确分数。
+
+#### 5.7.3 最小持久化（从可选提升为必须）
+
+由于报告中心（6.4）需要展示历史报告，而第 7、8 节又允许第一版不落库，二者存在矛盾。为闭合逻辑，约定第一版采用**轻量本地持久化**作为基线：
+
+- 每次生成采集计划 / 实验计划 / 报告时，将其元数据写入本地 JSON 索引 `tmp/vision/records.json`。
+- 采集项目写入 `tmp/vision/projects.json`；PDF 等产物保存到 `tmp/vision/reports/`。
+- 报告中心通过读取该 JSON 索引或扫描目录获得列表，不依赖关系型数据库。
+
+> 统一存储根目录为 `tmp/vision/`（与现有项目用 `tmp/` 存产物一致）：`tmp/vision/records.json`、`tmp/vision/projects.json`、`tmp/vision/reports/`。文中早期出现的 `data/vision/...` 一律以此为准。
+
+记录最小字段：
+
+```text
+id: 记录 ID
+type: collection_plan / experiment_plan / research_summary / stage_summary
+title: 标题
+projectId: 所属采集项目（见 5.8，可为空）
+createdAt: 创建时间
+pdfPath: PDF 路径（如有）
+```
+
+> 字段口径统一：记录/报告的 PDF 路径字段全系统统一为 `pdfPath`（弃用 8.4 早期的 `filePath`）。
+
+这样报告中心始终有可展示的数据来源，系统数据流闭合。
+
+### 5.8 采集项目（工作区）：把分散模块串成一条工作流
+
+#### 设计动机
+
+当前问答、采集规划、实验规划、报告四个模块彼此独立，演示时像四个拼接在一起的功能 demo，自然度不足。引入轻量的“采集项目（Project / Workspace）”概念作为聚合根，把它们组织成一条连贯的工作流。
+
+#### 概念模型
+
+一个采集项目代表用户的一次完整视觉任务，聚合其下产生的全部内容：
+
+```text
+VisionProject
+  id: 项目 ID
+  name: 项目名称（如“武汉理工大学路面小目标采集”）
+  description: 项目描述
+  visionTask: 关联的视觉任务（VisionTask）
+  collectionPlans: 采集计划列表
+  experimentPlans: 实验计划列表
+  reports: 生成的报告列表
+  createdAt / updatedAt: 时间戳
+```
+
+#### 工作流
+
+```text
+新建项目 -> 在项目内做采集规划 -> 生成采集计划 -> 规划实验流程 -> 生成实验计划 -> 一键导出报告 -> 报告归档到该项目
+```
+
+用户在问答页、采集辅助页、报告中心看到的内容都可归属到具体项目，系统从“四个功能”升级为“一条围绕项目的工作流”。
+
+#### 实现建议（保持轻量）
+
+- 第一版复用 5.7.3 的本地 JSON 持久化，新增 `tmp/vision/projects.json`，不引入数据库。
+- 新增 `cn.chengshuai.csaiagent.vision.model.VisionProject` 与 `vision.service.VisionProjectService`。
+- 新增 `VisionProjectController`，提供项目的增查与内容关联：
+  - `POST /api/vision/project`：新建项目
+  - `GET /api/vision/project/list`：项目列表
+  - `GET /api/vision/project/{id}`：项目详情（含其采集计划、实验计划、报告）
+- 采集规划、报告生成接口增加可选的 `projectId` 参数；不传时记录归入“未分类”，保证向后兼容、不破坏单功能使用方式。
+
+#### 前端落点
+
+- 新增 `cs-ai-agent-fronted/src/views/ProjectWorkspace.vue` 作为项目工作区入口（第一版可简化为项目列表 + 项目详情聚合视图）。
+- 报告中心、采集辅助页增加“归属项目”选择。
+
+#### 验收标准
+
+- 用户可新建项目，并在该项目下完成“采集规划 -> 实验规划 -> 报告导出”。
+- 项目详情能看到其下所有采集计划、实验计划与报告。
+- 不传 `projectId` 时各功能仍可独立使用。
+
 ## 6. 前端页面规划
 
 ### 6.1 首页
@@ -847,6 +962,8 @@ riskTips: 风险提示
 - 资料摘要 PDF
 - 阶段总结 PDF
 
+数据来源为 5.7.3 的本地 JSON 索引，可按所属采集项目（5.8）过滤展示。
+
 ## 7. 后端接口规划
 
 ### 7.1 问答接口
@@ -887,7 +1004,7 @@ POST /api/vision/collection/plan
 - 输入任务、位置、场景偏好
 - 输出采集点位、路线、任务清单
 
-可以先不做复杂数据库，第一版由智能体生成结构化结果即可。
+第一版不引入关系型数据库，但需按 5.7.3 做轻量本地 JSON 持久化，以便结构化结果可被报告中心和采集项目复用。
 
 #### 请求字段建议
 
@@ -898,7 +1015,7 @@ location: 用户输入的位置
 scenePreferences: 十字路口、停车场、校园道路等
 timeBudget: 采集时长
 transportMode: 步行、骑行、驾车
-needPdf: 是否生成 PDF
+needPdf: 兼容保留字段；当前采集规划与 PDF 生成为两步流程，PDF 由独立的 POST /api/vision/report/pdf 触发
 ```
 
 #### 响应字段建议
@@ -932,11 +1049,11 @@ POST /api/vision/report/pdf
 3. `POST /api/vision/collection/plan`
 4. `POST /api/vision/report/pdf`
 
-如果时间有限，可以暂缓数据库和报告中心，只要 `collection/plan` 能返回结构化采集计划并生成 PDF，就足够体现系统特色。
+第一版优先级最高的是 `collection/plan` 返回结构化采集计划并生成 PDF。报告中心列为 MVP 必做项，但实现保持极轻：仅读取 `tmp/vision/records.json` 展示报告列表，不做复杂管理功能。关系型数据库仍不引入。
 
 ## 8. 数据模型建议
 
-第一版可以先用 Java record / DTO，不强制落库。
+第一版可以先用 Java record / DTO 表达，并通过 5.7.3 的轻量本地 JSON 做持久化，不引入关系型数据库。
 
 ### 8.1 VisionTask
 
@@ -945,8 +1062,11 @@ taskType: 任务类型，如目标检测、图像分割、深度估计、三维�
 targetObjects: 目标对象，如车辆、行人、路沿、小障碍物
 sceneTypes: 场景类型，如十字路口、停车场、校园道路
 location: 用户位置或城市
-constraints: 时间、交通方式、距离范围、安全要求
+timeBudget: 采集时长（如 2 小时 / 半天 / 1 天）
+transportMode: 交通方式（步行 / 骑行 / 驾车）
 ```
+
+> 字段口径以本节与 technical-solution §2 / api-examples 为准：用显式的 `timeBudget` + `transportMode` 表达约束，不再使用早期的聚合字段 `constraints`。距离范围、安全要求等作为规划内部规则处理，不进入入参。
 
 ### 8.2 CollectionSite
 
@@ -956,6 +1076,8 @@ address: 地址
 distance: 距离
 sceneTags: 场景标签
 suitableTasks: 适合任务
+score: 评分（0-100）
+reason: 推荐理由
 captureSuggestions: 采集建议
 riskTips: 风险提示
 ```
@@ -975,11 +1097,25 @@ privacyTips: 隐私与安全说明
 ### 8.4 VisionReport
 
 ```text
+id: 报告 ID
 title: 报告标题
-sections: 报告章节
-sourceType: 采集计划、实验计划、资料摘要、阶段总结
+type: 采集计划 / 实验计划 / 资料摘要 / 阶段总结（collection_plan/experiment_plan/research_summary/stage_summary）
+projectId: 所属采集项目（可空）
 createdAt: 创建时间
-filePath: PDF 文件路径
+pdfPath: PDF 文件路径
+```
+
+### 8.5 VisionProject
+
+```text
+id: 项目 ID
+name: 项目名称
+description: 项目描述
+visionTask: 关联的视觉任务
+collectionPlans: 采集计划列表
+experimentPlans: 实验计划列表
+reports: 报告列表
+createdAt / updatedAt: 时间戳
 ```
 
 ## 9. 现有代码改造映射
@@ -1010,6 +1146,7 @@ src/main/java/cn/chengshuai/csaiagent/vision/
   controller/
     VisionCollectionController.java
     VisionReportController.java
+    VisionProjectController.java
   model/
     VisionTask.java
     VisionSceneType.java
@@ -1017,6 +1154,7 @@ src/main/java/cn/chengshuai/csaiagent/vision/
     CollectionPlan.java
     ExperimentPlan.java
     VisionReport.java
+    VisionProject.java
   service/
     VisionTaskParser.java
     VisionSceneClassifier.java
@@ -1024,6 +1162,8 @@ src/main/java/cn/chengshuai/csaiagent/vision/
     CollectionPlanService.java
     ExperimentPlanService.java
     VisionReportService.java
+    VisionProjectService.java
+    VisionRecordStore.java   // 5.7.3 轻量本地 JSON 持久化
   report/
     CollectionPlanReportBuilder.java
     ExperimentPlanReportBuilder.java
@@ -1071,12 +1211,58 @@ src/main/resources/document/无人驾驶视觉感知场景.md
 src/main/resources/document/采集安全与隐私规范.md
 ```
 
-如果要和毕业论文更自然关联，可以增加：
+可选扩充（仍属通用机器视觉范畴，不绑定任何具体研究）：
 
 ```text
-src/main/resources/document/路面小目标视觉采集指南.md
-src/main/resources/document/三维重建实验流程摘要.md
+src/main/resources/document/视觉评价指标说明.md
+src/main/resources/document/常见视觉数据集与开源项目速览.md
 ```
+
+### 9.4 数据与历史痕迹清理清单
+
+由于本系统的源代码、运行数据和提交历史会作为软著材料的一部分，改造时必须把旧“恋爱大师”业务的痕迹彻底清理，避免遗留在代码、配置、数据和注释中造成业务定位不一致。建议按下表逐项核对。
+
+#### 9.4.1 代码与命名
+
+| 清理对象 | 处理方式 |
+|---|---|
+| `LoveApp` / `LoveAppDocumentLoader` / `LoveAppVectorStoreConfig` / `LoveAppRagCustomAdvisorFactory` / `LoveAppContextualQueryAugmenterFactory` 等类名 | 重命名为 `Vision*` 对应类，旧类不保留兼容别名 |
+| `loveAppVectorStore` 等 Bean 名 | 改为 `visionVectorStore` 等，并同步所有 `@Qualifier` 引用 |
+| 路由 `/ai/love_app/chat/*` | 改为 `/ai/vision/chat/*`，前端 `/love-app` 路由同步改名 |
+| 代码注释、JavaDoc、变量名中出现的“恋爱/约会/单身/已婚/love”等词 | 全部替换为机器视觉业务语义 |
+| 系统提示词（System Prompt）中的恋爱大师人设 | 替换为机器视觉助手人设，确认无残留示例对话 |
+| 日志输出中的恋爱业务文案 | 同步替换 |
+
+#### 9.4.2 数据与运行产物
+
+| 清理对象 | 处理方式 |
+|---|---|
+| RAG 知识库文档 `src/main/resources/document/*.md`（三篇恋爱文档） | 删除或归档，替换为机器视觉文档 |
+| 向量库已有 embedding（SimpleVectorStore 内存 / PgVector 表） | **必须清空并基于新文档重建 embedding**，否则旧的恋爱向量仍会被检索命中 |
+| `FileBasedChatMemory` 生成的 `.kryo` 会话文件 | 删除历史会话文件，避免演示时翻出旧对话 |
+| 本地生成的 PDF、下载资源、临时文件目录 | 清理旧业务产物 |
+
+#### 9.4.3 配置与密钥
+
+| 清理对象 | 处理方式 |
+|---|---|
+| `mcp-servers.json` 中明文高德 API Key | 外置到环境变量或本地配置（不入库），源码中用占位符；软著提交版本不含真实密钥 |
+| `application.yml` 中的模型 API Key、数据库口令 | 同样外置，确认提交物中无敏感凭证 |
+
+#### 9.4.4 文档与提交历史
+
+| 清理对象 | 处理方式 |
+|---|---|
+| 前端页面标题、欢迎语、示例问题中的恋爱文案 | 替换为机器视觉文案 |
+| README、接口文档、Knife4j 描述 | 更新为机器视觉系统说明 |
+| Git 提交信息（如 “恋爱大师” 快照 commit） | 软著一般只看代码快照而非完整 git 历史，可不强制重写历史；若需提交干净仓库，可用全新初始提交打包 |
+
+#### 9.4.5 清理验收标准
+
+- 全仓库检索 `love`、`Love`、`恋爱`、`约会`、`单身`、`已婚` 无业务残留（测试用例、注释、资源文件均含在内）。
+- 向量库检索任意机器视觉问题，召回的均为机器视觉文档，无恋爱文档命中。
+- 启动系统、跑通问答与采集规划，全过程无恋爱业务文案出现。
+- 提交物中不含真实 API Key 与口令。
 
 ## 10. 分阶段落地计划
 
@@ -1152,7 +1338,7 @@ src/main/resources/document/三维重建实验流程摘要.md
 
 - 软著演示时可以不依赖纯聊天，也能通过页面展示系统功能。
 
-### 第六阶段：可选的报告中心与历史记录
+### 第六阶段：报告中心与历史记录（MVP 轻量必做）
 
 目标：
 
@@ -1224,9 +1410,9 @@ src/main/resources/document/三维重建实验流程摘要.md
 2. 以高德地图 MCP 驱动“视觉数据采集地点推荐”作为特色能力。
 3. 以智能体工具调用串联搜索、网页、文件、地图和 PDF。
 4. 以 PDF 采集计划和实验报告作为可展示成果。
-5. 以实验流程规划增强系统与毕业论文方向的关联。
+5. 以实验流程规划完善系统在机器视觉方向的功能闭环。
 
-这样改造后，系统既不会过度绑定某个具体论文算法，又能自然覆盖你的毕业论文方向、简历技术栈和现有项目能力。
+这样改造后，系统是一个独立、自洽的机器视觉辅助产品，既不绑定任何具体算法，又能自然覆盖机器视觉、无人驾驶视觉感知、数据采集等方向，并复用现有项目的全部技术栈。
 
 ## 14. 最小自然版本范围
 
@@ -1266,7 +1452,7 @@ src/main/resources/document/三维重建实验流程摘要.md
 
 1. 至少 6 篇机器视觉知识库 Markdown。
 2. 至少 1 篇采集安全与隐私规范。
-3. 至少 1 篇和毕业论文相关的视觉感知/三维重建摘要文档。
+3. 至少 1 篇无人驾驶视觉感知/三维重建方向的通用知识文档。
 
 ### 14.4 演示闭环
 

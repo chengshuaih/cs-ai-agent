@@ -1,5 +1,6 @@
 ### CUSTOM ###
 application-local.yml
+mcp-servers-local.json
 .DS_Store
 tmp
 

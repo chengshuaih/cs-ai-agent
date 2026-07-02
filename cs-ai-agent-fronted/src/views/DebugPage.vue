@@ -13,17 +13,45 @@
     
     <div class="container">
       <div class="debug-container">
+        <div class="debug-section overview-section">
+          <div class="overview-head">
+            <div>
+              <p class="eyebrow">Settings & Diagnostics</p>
+              <h3>环境设置概览</h3>
+            </div>
+            <span class="status-pill">本地开发</span>
+          </div>
+          <div class="overview-grid">
+            <div class="overview-item">
+              <span class="item-label">当前后端地址</span>
+              <code>{{ apiBaseUrl }}</code>
+            </div>
+            <div class="overview-item">
+              <span class="item-label">后端端口</span>
+              <span>默认 8123；端口占用时可通过 <code>--server.port</code> 改为其他端口</span>
+            </div>
+            <div class="overview-item">
+              <span class="item-label">前端地址配置</span>
+              <span>生产或换端口时通过 <code>VITE_API_BASE_URL</code> 指向后端 <code>/api</code></span>
+            </div>
+            <div class="overview-item">
+              <span class="item-label">MCP 本地开关</span>
+              <span>本地可用 <code>spring.ai.mcp.client.enabled=false</code> 跳过 MCP；需要工具能力时改为 <code>true</code></span>
+            </div>
+          </div>
+        </div>
+
         <div class="debug-section">
           <h3>后端连接测试</h3>
           <div class="test-buttons">
             <button @click="testBasicConnection" class="test-btn">
               测试基本连接
             </button>
-            <button @click="testLoveAppSSE" class="test-btn">
-              测试恋爱大师SSE
+            <button @click="testVisionQaSSE" class="test-btn">
+              测试视觉问答SSE
             </button>
-            <button @click="testManusSSE" class="test-btn">
-              测试智能体SSE
+            <button @click="testVisionAgentSSE" class="test-btn">
+              测试视觉智能体SSE
             </button>
           </div>
           <div class="test-results">
@@ -66,11 +94,13 @@
 
 <script>
 import axios from 'axios'
+import { API_BASE_URL } from '../utils/api'
 
 export default {
   name: 'DebugPage',
   data() {
     return {
+      apiBaseUrl: API_BASE_URL,
       testResults: [],
       networkLogs: [],
       testMessage: '你好，这是一条测试消息',
@@ -114,7 +144,7 @@ export default {
       this.addLog('info', '开始测试基本连接...')
       
       try {
-        const response = await axios.get('http://localhost:8123/api/health', {
+        const response = await axios.get(`${API_BASE_URL}/health`, {
           timeout: 5000
         })
         this.addTestResult('success', `连接成功: ${response.status}`)
@@ -128,11 +158,11 @@ export default {
       }
     },
     
-    async testLoveAppSSE() {
-      this.addLog('info', '开始测试恋爱大师SSE连接...')
+    async testVisionQaSSE() {
+      this.addLog('info', '开始测试视觉问答SSE连接...')
       
       try {
-        const response = await fetch('http://localhost:8123/api/ai/love_app/chat/sse?message=测试&chatId=test_123', {
+        const response = await fetch(`${API_BASE_URL}/ai/vision/chat/sse?message=测试&chatId=test_123`, {
           method: 'GET',
           headers: {
             'Accept': 'text/event-stream',
@@ -174,11 +204,11 @@ export default {
       }
     },
     
-    async testManusSSE() {
-      this.addLog('info', '开始测试智能体SSE连接...')
+    async testVisionAgentSSE() {
+      this.addLog('info', '开始测试视觉智能体SSE连接...')
       
       try {
-        const response = await fetch('http://localhost:8123/api/ai/manus/chat?message=测试', {
+        const response = await fetch(`${API_BASE_URL}/ai/vision-agent/chat?message=测试`, {
           method: 'GET',
           headers: {
             'Accept': 'text/event-stream',
@@ -208,7 +238,7 @@ export default {
       this.addLog('info', `发送测试消息: ${this.testMessage}`)
       
       try {
-        const response = await axios.get(`http://localhost:8123/api/ai/love_app/chat/sse`, {
+        const response = await axios.get(`${API_BASE_URL}/ai/vision/chat/sse`, {
           params: {
             message: this.testMessage,
             chatId: 'debug_' + Date.now()
@@ -325,6 +355,76 @@ export default {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
+}
+
+.overview-section {
+  border-color: #d6eee6;
+  background: linear-gradient(135deg, #ffffff 0%, #f3fbf8 100%);
+}
+
+.overview-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 5px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.status-pill {
+  border: 1px solid #bfe7dc;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #f0fdf7;
+  color: #047857;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.overview-item {
+  min-width: 0;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.item-label {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+code {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 1px 5px;
+  background: #f9fafb;
+  color: #374151;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 .test-buttons {
@@ -535,6 +635,14 @@ export default {
   .debug-section {
     padding: 14px;
     border-radius: 12px;
+  }
+
+  .overview-head {
+    flex-direction: column;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr;
   }
 
   .test-buttons,

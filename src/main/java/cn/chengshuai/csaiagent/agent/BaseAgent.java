@@ -121,32 +121,20 @@ public abstract class BaseAgent {
             }
             // 2、执行，更改状态
             this.state = AgentState.RUNNING;
-            // 记录消息上下文
             messageList.add(new UserMessage(userPrompt));
-            // 保存结果列表
-            List<String> results = new ArrayList<>();
+            // 注入 SseEmitter 到子类（ToolCallAgent 等），支持流式最终回复
+            injectStreamingEmitter(sseEmitter);
             try {
-                // 执行循环
+                // 执行循环：工具调用阶段静默，最终回复由 ToolCallAgent 直接流式推送
                 for (int i = 0; i < maxSteps && state != AgentState.FINISHED; i++) {
-                    int stepNumber = i + 1;
-                    currentStep = stepNumber;
-                    log.info("Executing step {}/{}", stepNumber, maxSteps);
-                    // 单步执行
-                    String stepResult = step();
-                    String result = formatStepResult(stepNumber, stepResult);
-                    if (StrUtil.isNotBlank(result)) {
-                        results.add(result);
-                        // 只把用户可见结果输出到 SSE，工具执行细节留在内部上下文和日志中
-                        sseEmitter.send(result);
-                    }
+                    currentStep = i + 1;
+                    log.info("Executing step {}/{}", currentStep, maxSteps);
+                    step();
                 }
-                // 检查是否超出步骤限制
                 if (currentStep >= maxSteps) {
                     state = AgentState.FINISHED;
-                    results.add("执行结束：达到最大步骤（" + maxSteps + "）");
                     sseEmitter.send("执行结束：达到最大步骤（" + maxSteps + "）");
                 }
-                // 正常完成
                 sseEmitter.send("[DONE]");
                 sseEmitter.complete();
             } catch (Exception e) {
@@ -159,7 +147,6 @@ public abstract class BaseAgent {
                     sseEmitter.completeWithError(ex);
                 }
             } finally {
-                // 3、清理资源
                 this.cleanup();
             }
         });
@@ -191,6 +178,13 @@ public abstract class BaseAgent {
             return stepResult;
         }
         return stepResult;
+    }
+
+    /**
+     * 子类可重写此方法，在 runStream 启动后注入 SseEmitter，用于流式回复。
+     */
+    protected void injectStreamingEmitter(SseEmitter emitter) {
+        // 默认无操作，由 ToolCallAgent 等子类重写
     }
 
     /**

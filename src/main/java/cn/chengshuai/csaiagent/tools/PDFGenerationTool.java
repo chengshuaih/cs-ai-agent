@@ -20,7 +20,18 @@ public class PDFGenerationTool {
     public String generatePDF(
             @ToolParam(description = "Name of the file to save the generated PDF") String fileName,
             @ToolParam(description = "Content to be included in the PDF") String content) {
-        String fileDir = FileConstant.FILE_SAVE_DIR + "/pdf";
+        return generatePDF(fileName, content, FileConstant.FILE_SAVE_DIR + "/pdf");
+    }
+
+    /**
+     * 在指定目录生成 PDF。供报告中枢统一落盘到 tmp/vision/reports 使用。
+     *
+     * @param fileName 文件名
+     * @param content  内容
+     * @param fileDir  目标目录
+     * @return 结果描述（成功包含 "PDF 文件已生成：{filePath}"）
+     */
+    public String generatePDF(String fileName, String content, String fileDir) {
         String filePath = fileDir + "/" + fileName;
         try {
             // 创建目录

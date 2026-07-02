@@ -2,50 +2,66 @@
   <div class="home">
     <header class="top-nav">
       <div class="nav-inner">
-        <div class="brand">CS AI Agent</div>
-        <button
-          class="debug-button"
-          type="button"
-          aria-label="打开调试工具"
-          title="调试工具"
-          @click="navigateTo('/debug')"
-        >
-          ⚙
-        </button>
+        <div class="brand">机器视觉智能问答与采集辅助系统</div>
+        <div class="nav-right">
+          <span v-if="username" class="user-info">{{ username }}</span>
+          <button v-if="username" class="logout-btn" type="button" @click="logout">退出</button>
+          <button
+            class="debug-button"
+            type="button"
+            aria-label="打开设置与调试"
+            title="设置与调试"
+            @click="navigateTo('/debug')"
+          >⚙</button>
+        </div>
       </div>
     </header>
 
     <main class="main-content">
       <section class="intro">
-        <p class="eyebrow">AI Workspace</p>
-        <h1 class="title">今天想让 AI 帮你做什么？</h1>
-        <p class="subtitle">选择一个智能体开始对话，获得简洁、专注的 AI 助手体验。</p>
+        <p class="eyebrow">Machine Vision Workspace</p>
+        <h1 class="title">面向机器视觉的智能助手</h1>
+        <p class="subtitle">围绕视觉学习、数据采集、实验规划与报告生成，提供问答、采集辅助与项目管理能力。</p>
       </section>
 
-      <section class="apps-panel" aria-label="应用入口">
-        <button class="app-card" type="button" @click="navigateTo('/love-app')">
-          <span class="app-icon" aria-hidden="true">💕</span>
+      <section class="apps-panel" aria-label="功能入口">
+        <button class="app-card main-card" type="button" @click="navigateTo('/dialog-workspace')">
+          <span class="app-icon" aria-hidden="true">D</span>
           <span class="app-content">
-            <span class="app-title">AI 恋爱大师</span>
-            <span class="app-description">专业的恋爱咨询和建议，帮助您解决情感问题</span>
+            <span class="app-title">对话助手</span>
+            <span class="app-description">在一个界面切换机器视觉知识问答与采集智能体对话</span>
             <span class="app-features">
-              <span class="feature">情感分析</span>
-              <span class="feature">关系建议</span>
-              <span class="feature">沟通技巧</span>
+              <span class="feature">视觉知识问答</span>
+              <span class="feature">视觉采集智能体</span>
+              <span class="feature">SSE 对话</span>
             </span>
           </span>
           <span class="app-arrow" aria-hidden="true">→</span>
         </button>
 
-        <button class="app-card" type="button" @click="navigateTo('/manus-app')">
-          <span class="app-icon" aria-hidden="true">🤖</span>
+        <button class="app-card main-card" type="button" @click="navigateTo('/collection-workspace')">
+          <span class="app-icon" aria-hidden="true">C</span>
           <span class="app-content">
-            <span class="app-title">AI 超级智能体</span>
-            <span class="app-description">多功能AI助手，为您提供全方位的智能服务</span>
+            <span class="app-title">采集工作台</span>
+            <span class="app-description">集中处理采集规划、项目归档与报告查看</span>
             <span class="app-features">
-              <span class="feature">智能问答</span>
-              <span class="feature">任务协助</span>
-              <span class="feature">知识咨询</span>
+              <span class="feature">采集辅助规划</span>
+              <span class="feature">项目工作区</span>
+              <span class="feature">报告中心</span>
+            </span>
+          </span>
+          <span class="app-arrow" aria-hidden="true">→</span>
+        </button>
+
+        <button class="app-card main-card" type="button" @click="navigateTo('/knowledge')">
+          <span class="app-icon" aria-hidden="true">K</span>
+          <span class="app-content">
+            <span class="app-title">知识库管理</span>
+            <span class="app-description">上传机器视觉领域文档，支持 RAG 知识检索问答</span>
+            <span class="app-features">
+              <span class="feature">文档上传</span>
+              <span class="feature">知识库检索</span>
+              <span class="feature">RAG 增强问答</span>
             </span>
           </span>
           <span class="app-arrow" aria-hidden="true">→</span>
@@ -58,9 +74,17 @@
 <script>
 export default {
   name: 'Home',
+  data() {
+    return { username: localStorage.getItem('username') || '' }
+  },
   methods: {
     navigateTo(path) {
       this.$router.push(path)
+    },
+    logout() {
+      localStorage.removeItem('token')
+      localStorage.removeItem('username')
+      this.$router.push('/login')
     }
   }
 }
@@ -101,6 +125,11 @@ export default {
   color: #202123;
 }
 
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.user-info { font-size: 13px; color: #374151; }
+.logout-btn { border: 1px solid #d9d9e3; background: #fff; color: #353740; border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+.logout-btn:hover { background: #f1f1f3; }
+
 .debug-button {
   width: 38px;
   height: 38px;
@@ -127,14 +156,14 @@ export default {
 }
 
 .main-content {
-  width: min(100%, 860px);
+  width: min(100%, 1080px);
   margin: 0 auto;
   padding: 88px 24px 64px;
   box-sizing: border-box;
 }
 
 .intro {
-  margin-bottom: 28px;
+  margin-bottom: 34px;
   text-align: center;
 }
 
@@ -157,7 +186,7 @@ export default {
 }
 
 .subtitle {
-  max-width: 560px;
+  max-width: 620px;
   margin: 18px auto 0;
   color: #667085;
   font-size: 1rem;
@@ -166,21 +195,22 @@ export default {
 
 .apps-panel {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-  max-width: 680px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
 .app-card {
   width: 100%;
+  min-height: 210px;
   border: 1px solid #e4e4de;
-  border-radius: 18px;
-  padding: 18px 20px;
+  border-radius: 24px;
+  padding: 24px;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 18px;
   background: #ffffff;
   color: inherit;
   text-align: left;
@@ -193,54 +223,56 @@ export default {
 .app-card:focus-visible {
   border-color: #cfcfca;
   background: #fffefa;
-  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.08);
-  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(16, 24, 40, 0.1);
+  transform: translateY(-3px);
   outline: none;
 }
 
 .app-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: #f6f6f3;
-  font-size: 1.35rem;
+  background: #f1f5f3;
+  color: #0f766e;
+  font-size: 1.45rem;
+  font-weight: 700;
 }
 
 .app-content {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 10px;
 }
 
 .app-title {
   color: #202123;
-  font-size: 1.05rem;
-  font-weight: 650;
+  font-size: 1.24rem;
+  font-weight: 700;
   line-height: 1.35;
 }
 
 .app-description {
   color: #6b7280;
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-size: 0.96rem;
+  line-height: 1.6;
 }
 
 .app-features {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .feature {
   border: 1px solid #ecece7;
   border-radius: 999px;
-  padding: 4px 9px;
+  padding: 5px 10px;
   background: #fafaf8;
   color: #6b7280;
   font-size: 0.78rem;
@@ -250,7 +282,7 @@ export default {
 
 .app-arrow {
   color: #9ca3af;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   transition: color 0.18s ease, transform 0.18s ease;
 }
 
@@ -278,10 +310,15 @@ export default {
     margin-right: 0;
   }
 
+  .apps-panel {
+    grid-template-columns: 1fr;
+  }
+
   .app-card {
+    min-height: 0;
     grid-template-columns: auto 1fr;
     gap: 13px;
-    padding: 16px;
+    padding: 18px;
   }
 
   .app-arrow {
@@ -299,9 +336,9 @@ export default {
   }
 
   .app-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
     font-size: 1.2rem;
   }
 

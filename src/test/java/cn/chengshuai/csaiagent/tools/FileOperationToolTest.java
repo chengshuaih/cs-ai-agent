@@ -12,7 +12,7 @@ class FileOperationToolTest {
     @Test
     void readFile() {
         FileOperationTool fileOperationTool = new FileOperationTool();
-        String fileName = "恋爱智能体.txt";
+        String fileName = "机器视觉智能体.txt";
         String readFile = fileOperationTool.readFile(fileName);
         Assertions.assertNotNull(readFile);
 
@@ -21,8 +21,8 @@ class FileOperationToolTest {
     @Test
     void writeFile() {
         FileOperationTool fileOperationTool = new FileOperationTool();
-        String fileName = "恋爱智能体.txt";
-        String content = "这是一个恋爱智能体！！！！！！！！！！！";
+        String fileName = "机器视觉智能体.txt";
+        String content = "这是一个机器视觉智能体！！！！！！！！！！！";
         String writeFile = fileOperationTool.writeFile(fileName, content);
         Assertions.assertNotNull(writeFile);
     }

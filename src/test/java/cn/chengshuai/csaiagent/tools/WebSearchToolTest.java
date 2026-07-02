@@ -15,7 +15,7 @@ class WebSearchToolTest {
     @Test
     void searchWeb() {
         WebSearchTool webSearchTool = new WebSearchTool(apiKey);
-        String result = webSearchTool.searchWeb("恋爱教程查询");
+        String result = webSearchTool.searchWeb("目标检测 YOLO 教程");
         assertNotNull(result);
     }
 }

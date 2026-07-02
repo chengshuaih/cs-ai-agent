@@ -17,6 +17,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +45,9 @@ public class ToolCallAgent extends ReActAgent {
     // 禁用 Spring AI 内置的工具调用机制，自己维护选项和消息上下文
     private final ChatOptions chatOptions;
 
+    // 流式输出目标（runStream 时注入）
+    private SseEmitter streamingEmitter;
+
     public ToolCallAgent(ToolCallback[] availableTools) {
         super();
         this.availableTools = availableTools;
@@ -52,6 +56,11 @@ public class ToolCallAgent extends ReActAgent {
         this.chatOptions = DashScopeChatOptions.builder()
                 .withInternalToolExecutionEnabled(false)
                 .build();
+    }
+
+    @Override
+    protected void injectStreamingEmitter(SseEmitter emitter) {
+        this.streamingEmitter = emitter;
     }
 
     /**
@@ -96,6 +105,10 @@ public class ToolCallAgent extends ReActAgent {
                 getMessageList().add(assistantMessage);
                 this.lastThinkResult = StrUtil.blankToDefault(result, "思考完成 - 无需行动");
                 setState(AgentState.FINISHED);
+                // 流式场景：把最终回复以打字机方式推送给前端
+                if (streamingEmitter != null) {
+                    sendAsTypewriter(this.lastThinkResult);
+                }
                 return false;
             } else {
                 // 需要调用工具时，无需记录助手消息，因为调用工具时会自动记录
@@ -106,8 +119,35 @@ public class ToolCallAgent extends ReActAgent {
             this.lastThinkResult = "处理时遇到了问题，请稍后再试。";
             getMessageList().add(new AssistantMessage(this.lastThinkResult));
             setState(AgentState.FINISHED);
+            if (streamingEmitter != null) {
+                sendAsTypewriter(this.lastThinkResult);
+            }
             return false;
         }
+    }
+
+    /**
+     * 将文本按小块分段 push 到 SseEmitter，模拟打字机效果。
+     * 必须在 [DONE] 发送之前同步执行完毕。
+     */
+    private void sendAsTypewriter(String text) {
+        if (streamingEmitter == null || text == null || text.isEmpty()) {
+            log.warn("sendAsTypewriter 跳过：emitter={}, textLen={}", streamingEmitter != null, text == null ? 0 : text.length());
+            return;
+        }
+        log.info("开始打字机推送，文本长度={}", text.length());
+        int chunkSize = 10;
+        for (int i = 0; i < text.length(); i += chunkSize) {
+            String chunk = text.substring(i, Math.min(i + chunkSize, text.length()));
+            try {
+                streamingEmitter.send(SseEmitter.event().data(chunk));
+                Thread.sleep(25);
+            } catch (Exception ex) {
+                log.warn("SSE typewriter send failed at {}", i, ex);
+                break;
+            }
+        }
+        log.info("打字机推送完成");
     }
 
     /**

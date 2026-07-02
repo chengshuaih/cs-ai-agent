@@ -15,9 +15,9 @@ class   CsManusTest {
 
     @Test
     void run() {
-        String userPrompt = """  
-                我的另一半居住在上海静安区，请帮我找到 5 公里内合适的约会地点，  
-                并结合一些网络图片，制定一份详细的约会计划，  
+        String userPrompt = """
+                我想在上海静安区做一次目标检测数据采集，请帮我推荐 5 公里内合适的采集点位，
+                并结合一些网络样例图片，制定一份详细的数据采集计划，
                 并以 PDF 格式输出""";
         String answer = csManus.run(userPrompt);
         Assertions.assertNotNull(answer);

@@ -17,14 +17,17 @@ import java.util.stream.Collectors;
 @Service
 public class ImageSearchTool {
 
-    // 替换为你的 Pexels API 密钥（需从官网申请）
-    private static final String API_KEY = "pbYIVbIs0IeDqgToICQjMHA6PEuBTCWqf9zhWtSTsXhnjUPCBbyU6khc";
+    // Pexels API 密钥从环境变量 PEXELS_API_KEY 读取，禁止硬编码
+    private static final String API_KEY = System.getenv("PEXELS_API_KEY");
 
     // Pexels 常规搜索接口（请以文档为准）
     private static final String API_URL = "https://api.pexels.com/v1/search";
 
     @Tool(description = "search image from web")
     public String searchImage(@ToolParam(description = "Search query keyword") String query) {
+        if (StrUtil.isBlank(API_KEY)) {
+            return "Error search image: 未配置 PEXELS_API_KEY 环境变量，无法调用图片搜索服务";
+        }
         try {
             return String.join(",", searchMediumImages(query));
         } catch (Exception e) {

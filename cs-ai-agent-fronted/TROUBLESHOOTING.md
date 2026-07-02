@@ -31,9 +31,9 @@ curl -v http://localhost:8123/api/health
 确保后端SSE接口正确实现：
 
 ```java
-@GetMapping(value = "/love_app/chat/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-public Flux<String> doChatWithLoveAppSse(String message, String chatId) {
-    return loveApp.doChatByStream(message, chatId)
+@GetMapping(value = "/vision/chat/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+public Flux<String> doChatWithVisionSSE(String message, String chatId) {
+    return visionQaApp.doChatByStream(message, chatId)
         .map(data -> "data: " + data + "\n\n")
         .concatWith(Mono.just("data: [DONE]\n\n"));
 }
@@ -95,7 +95,7 @@ public class CorsConfig implements WebMvcConfigurer {
 3. **访问调试页面**
    - 打开 http://localhost:3000/debug
    - 点击"测试基本连接"
-   - 点击"测试恋爱大师SSE"
+   - 点击"测试视觉问答SSE"
    - 查看测试结果和日志
 
 4. **检查控制台输出**
