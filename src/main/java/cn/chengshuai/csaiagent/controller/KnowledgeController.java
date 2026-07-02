@@ -5,12 +5,15 @@ import cn.chengshuai.csaiagent.common.ResultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.ai.vectorstore.SimpleVectorStoreContent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -53,9 +56,14 @@ public class KnowledgeController {
      * 查询已入库文档（直接读取内存 store，不调用 embedding）。
      */
     @GetMapping("/list")
+    @SuppressWarnings("unchecked")
     public ApiResponse<List<Map<String, Object>>> list() {
         try {
-            List<Map<String, Object>> result = vectorStore.get().values().stream()
+            Field storeField = SimpleVectorStore.class.getDeclaredField("store");
+            storeField.setAccessible(true);
+            Map<String, SimpleVectorStoreContent> storeMap =
+                    (Map<String, SimpleVectorStoreContent>) storeField.get(vectorStore);
+            List<Map<String, Object>> result = storeMap.values().stream()
                     .map(d -> Map.<String, Object>of(
                             "id", d.getId(),
                             "title", d.getMetadata().getOrDefault("title", ""),
